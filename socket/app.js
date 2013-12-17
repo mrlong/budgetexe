@@ -12,19 +12,36 @@
 var net = require('net');
 var settings = require('./settings');
 var util = require('./util');
+var clientdata = require('./data');
+//var buffer = require('buffer');
 
+var clients = [];  //客户端集合
 var Option ={
   allowHalfOpen:false
 };
 
+
 var server = net.createServer(Option,function(socket){
-  socket.write(util.getTimeNow() +' Echo server' + this.connections + '\r\n');
+
+  socket.name = socket.remoteAddress + ":" + socket.remotePort;
+  clients.push(socket);
+  socket.write( util.getTimeNow() + ' ' +  
+    socket.name + ' in ' +
+    settings.welcome + 
+  '\r\n');
+  
   socket.on('data', function(data) {
-    console.log(data.toString());
+    console.log('长度' + data.length + '内容:' +data.toString() );
+    clientdata.ClientData(this,socket,data);
   });
 
   socket.on('end', function() {
-    console.log('server disconnected-' + socket.localAddress);
+    clients.splice(clients.indexOf(socket), 1);
+    console.log(socket.name + ' left end.');
+  });
+
+  socket.on('close', function(data) {
+    console.log('close event');
   });
 
 });
@@ -34,7 +51,7 @@ server.on('error', function (e) {
     console.log('Address in use, retrying...');
     setTimeout(function () {
       server.close();
-      server.listen(PORT, HOST);
+      server.listen(settings.port, settings.host);
     }, 1000);
   }
 });

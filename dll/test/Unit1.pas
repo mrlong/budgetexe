@@ -62,12 +62,17 @@ end;
 
 procedure TForm1.btn2Click(Sender: TObject);
 var
+  i : Integer;
   mystr : string;
+  data : array of Integer;
 begin
   if idtcpclnt1.Connected then
   begin
-    idtcpclnt1.SendCmd('world');
-    mystr := idtcpclnt1.ReadString(3);
+    SetLength(data,10);
+    for i:=0 to 9 do
+      data[i] := i;
+    idtcpclnt1.Write(UTF8Encode('{"data":"sssssssss在要地地"}'));
+    mystr := Utf8Decode(idtcpclnt1.ReadLn);
     mmo1.Lines.Add(mystr);
   end;
 end;
