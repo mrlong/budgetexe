@@ -16,12 +16,14 @@
  *  success: true,   //=true表示成功
  *  msg: '信息说明', 
  *  command:'',      //命令名
- *  encrypt:true,    //=true 表示包是加密的包 
+ *  zip:false,       //true 表示压缩过了
+ *  encrypt:true,    //=true 表示包是加密的包 , 如有压缩是先压缩后解密
  *  data:{}          //数据包内容,可能有类型不一样，包的内容不一样
  * }
  * 
  * command:
- *   'datetime' = 取出服务器的日期
+ *   datetime = 取出服务器的日期 data:{datetime:""};
+ *   login    = 登录 
  *
  */
 var util = require('./util');
@@ -33,6 +35,7 @@ function datapack(items){
   this.msg = '';
   this.command = '';
   this.encrypt = false;
+  this.zip = false;
   this.data = {};
   if(items){
     cloneAll(items,this);
@@ -42,8 +45,8 @@ function datapack(items){
 //对象拷贝
 function cloneAll(source,dirc){
   for(var key in source){
-    if(typeof source[key] == "object"){
-      dirc[key]= new obj;            
+    if(typeof source[key] === "object"){
+      dirc[key]= {};            
       cloneAll(source[key],dirc[key]);            
       continue;        
     }
@@ -76,9 +79,11 @@ exports.ClientData = function(server,socket,data){
 
 //datetime
 function Dodatetime(server,socket,json){
+  var d = util.getTimeNow();
   var dp = new datapack({
     success : true,
     command : json.command,
-    data:{datetime:util.getTimeNow}
+    data    : {datetime:d} 
   });
+  socket.write(JSON.stringify(dp)+LN);
 };

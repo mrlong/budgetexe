@@ -57,6 +57,15 @@ object Form1: TForm1
       'mmo1')
     TabOrder = 4
   end
+  object btn3: TBitBtn
+    Left = 64
+    Top = 152
+    Width = 113
+    Height = 25
+    Caption = #33719#21462#26381#21153#22120#26102#38388
+    TabOrder = 5
+    OnClick = btn3Click
+  end
   object idtcpclnt1: TIdTCPClient
     MaxLineAction = maException
     ReadTimeout = 0

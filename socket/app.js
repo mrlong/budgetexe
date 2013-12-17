@@ -20,7 +20,6 @@ var Option ={
   allowHalfOpen:false
 };
 
-
 var server = net.createServer(Option,function(socket){
 
   socket.name = socket.remoteAddress + ":" + socket.remotePort;

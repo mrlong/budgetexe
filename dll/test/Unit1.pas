@@ -5,7 +5,8 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, Buttons, IdBaseComponent, IdComponent,
-  IdTCPConnection, IdTCPClient;
+  IdTCPConnection, IdTCPClient,
+  datapack;
 
 type
   TForm1 = class(TForm)
@@ -15,9 +16,11 @@ type
     edt2: TEdit;
     btn2: TButton;
     mmo1: TMemo;
+    btn3: TBitBtn;
     procedure btn1Click(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btn2Click(Sender: TObject);
+    procedure btn3Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -75,6 +78,26 @@ begin
     mystr := Utf8Decode(idtcpclnt1.ReadLn);
     mmo1.Lines.Add(mystr);
   end;
+end;
+
+procedure TForm1.btn3Click(Sender: TObject);
+var
+  mydp : TDataPack;
+  mystr : string;
+begin
+  mydp := TDataPack.Create(ncDateTime);
+  try
+    mystr := mydp.toJsonStr();
+    if idtcpclnt1.Connected then
+    begin
+      idtcpclnt1.Write(mystr);
+      mystr := Utf8Decode(idtcpclnt1.ReadLn);
+      mmo1.Lines.Add(mystr);
+    end;
+  finally
+    mydp.Free;
+  end;
+
 end;
 
 end.
