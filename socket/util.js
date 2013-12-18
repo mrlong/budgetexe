@@ -34,3 +34,8 @@ Date.prototype.Format = function (fmt) {
 exports.getTimeNow = function(){
   return new Date().Format('yyyy-MM-dd hh:mm:ss');//  toUTCString();
 };
+
+//输出日志
+exports.log = function(msg,err){
+  console.log(msg);
+};

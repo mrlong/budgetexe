@@ -7,7 +7,7 @@
  */
 
 var net = require('net');
-var client = net.connect({port:1377},function(){
+var client = net.connect({host:'192.168.1.104',port:1377},function(){
   console.log('client connected');
   var buf = new Buffer('test\r\n');
   client.write(buf);

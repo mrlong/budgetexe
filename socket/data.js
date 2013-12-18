@@ -72,7 +72,8 @@ exports.ClientData = function(server,socket,data){
       success:false,
       msg:'未定义的命令'
     });
-    socket.write(JSON.stringify(dp)+LN);
+    socket.write(JSON.stringify(dp));
+    socket.write(LN);
   }
 };
 
@@ -83,7 +84,9 @@ function Dodatetime(server,socket,json){
   var dp = new datapack({
     success : true,
     command : json.command,
-    data    : {datetime:d} 
+    data    : {datetime:d},
+    pid     : process.pid // worker.id 
   });
-  socket.write(JSON.stringify(dp)+LN);
+  socket.write(JSON.stringify(dp));
+  socket.write(LN);
 };
