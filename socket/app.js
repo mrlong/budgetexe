@@ -15,10 +15,16 @@ var util = require('./util');
 var clientdata = require('./data');
 var cluster = require('cluster');
 var numCPUs = require('os').cpus().length; //cpu核数
+var tls = require('tls');
+var fs = require('fs');
 
 var clients = [];  //客户端集合
-var Option ={
-  allowHalfOpen:false
+var Options ={
+  key: fs.readFileSync('../keys/server.key'),
+  cert: fs.readFileSync('../keys/server.crt'),
+  ca:[fs.readFileSync('../keys/ca.crt')],
+  requestCert:true,
+  rejectUnauthorized : true
 };
 
 if(cluster.isMaster){
@@ -37,10 +43,13 @@ if(cluster.isMaster){
 
 } else if (cluster.isWorker) {
 
-  var server = net.createServer(Option,function(socket){
+  var server = tls.createServer(Options,function(socket){
+    socket.setEncoding('utf8');
     socket.name = socket.remoteAddress + ":" + socket.remotePort;
     clients.push(socket);
+    
     socket.write( util.getTimeNow() + ' ' +  
+      (socket.authorized?'authorized':'unauthorized ') +
       socket.name + ' in ' +
       settings.welcome + '\r\n');
   

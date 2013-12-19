@@ -9,7 +9,7 @@ MAKE = $(ROOT)\bin\make.exe -$(MAKEFLAGS) -f$**
 DCC = $(ROOT)\bin\dcc32.exe $**
 BRCC = $(ROOT)\bin\brcc32.exe $**
 #------------------------------------------------------------------------------
-PROJECTS = Project2.exe net.dll sample1.exe
+PROJECTS = Project2.exe net.dll
 #------------------------------------------------------------------------------
 default: $(PROJECTS)
 #------------------------------------------------------------------------------
@@ -18,9 +18,6 @@ Project2.exe: test\Project2.dpr
   $(DCC)
 
 net.dll: net.dpr
-  $(DCC)
-
-sample1.exe: ..\..\lkJSON-1.07\sample1.dpr
   $(DCC)
 
 

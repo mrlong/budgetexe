@@ -14,6 +14,13 @@ object Form1: TForm1
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
+  object lbl1: TLabel
+    Left = 200
+    Top = 320
+    Width = 137
+    Height = 13
+    Caption = '10'#31186#19968#27425
+  end
   object btn1: TBitBtn
     Left = 64
     Top = 40
@@ -29,7 +36,7 @@ object Form1: TForm1
     Width = 257
     Height = 21
     TabOrder = 1
-    Text = '127.0.0.1'
+    Text = '192.168.1.104'
   end
   object edt2: TEdit
     Left = 200
@@ -65,6 +72,31 @@ object Form1: TForm1
     Caption = #33719#21462#26381#21153#22120#26102#38388
     TabOrder = 5
     OnClick = btn3Click
+  end
+  object chk1: TCheckBox
+    Left = 64
+    Top = 296
+    Width = 249
+    Height = 17
+    Caption = #27979#35797#21709#24212#30340#36895#24230
+    TabOrder = 6
+  end
+  object edt3: TEdit
+    Left = 200
+    Top = 296
+    Width = 121
+    Height = 21
+    TabOrder = 7
+    Text = '10'
+  end
+  object btn4: TButton
+    Left = 359
+    Top = 294
+    Width = 75
+    Height = 25
+    Caption = #24320#22987#27979#35797
+    TabOrder = 8
+    OnClick = btn4Click
   end
   object idtcpclnt1: TIdTCPClient
     MaxLineAction = maException

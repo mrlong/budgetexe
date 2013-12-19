@@ -97,9 +97,11 @@ end;
 function TDataPack.toJsonStr: string;
 var
   myJson : TlkJSONobject;
+  mydatajson : TlkJSONobject;
   i : Integer;
 begin
   myJson := TlkJSONobject.Create;
+  mydatajson := TlkJSONobject.Create;
   try
     myJson.Add('ver',fver);
     myJson.Add('success',fsuccess);

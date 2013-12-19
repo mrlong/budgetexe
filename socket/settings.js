@@ -11,6 +11,6 @@
 
 module.exports = { 
   welcome: 'welcome budget server',
-  host: '192.168.1.104',
+  host: 'localhost',
   port: 1377
 }

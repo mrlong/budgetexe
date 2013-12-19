@@ -17,10 +17,15 @@ type
     btn2: TButton;
     mmo1: TMemo;
     btn3: TBitBtn;
+    chk1: TCheckBox;
+    edt3: TEdit;
+    btn4: TButton;
+    lbl1: TLabel;
     procedure btn1Click(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btn2Click(Sender: TObject);
     procedure btn3Click(Sender: TObject);
+    procedure btn4Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -95,9 +100,27 @@ begin
       mmo1.Lines.Add(mystr);
     end;
   finally
-    mydp.Free;
+    //mydp.Free;
   end;
 
+end;
+
+procedure TForm1.btn4Click(Sender: TObject);
+var
+  mydp : TDataPack;
+  mystr : string;
+begin
+  while(1=1) do
+  begin
+    if not chk1.Checked then Break;
+    if not idtcpclnt1.Connected then Break;
+    Sleep(1000*strtoint(edt3.Text));
+    mydp := TDataPack.Create(ncDateTime);
+    mystr := mydp.toJsonStr();
+    idtcpclnt1.Write(mystr);
+    mystr := Utf8Decode(idtcpclnt1.ReadLn);
+    mmo1.Lines.Add(mystr);
+  end;
 end;
 
 end.
