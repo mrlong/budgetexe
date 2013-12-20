@@ -20,13 +20,20 @@ var client = tls.connect(1377,options,function(){
   console.log('client connected');
   //process.stdin.pipe(client);
   //process.stdin.resume();
+  try{
+    client.write('mrlong\r\n');
+  } catch(e) {
+   console.log('s');
+  } finally{
+    console.log('t');
+  }
 });
 
 client.setEncoding('utf8');
 
 client.on('data',function(data){
   console.log(data.toString());
-  client.end();
+  //client.end();
 });
 
 client.on('end',function(){
