@@ -12,6 +12,7 @@
 // *
 // * command:
 // *   'datetime' = 取出服务器的日期
+// *   'upfile'   = 上传文件
 // *
 // */
 
@@ -25,7 +26,8 @@ type
 
   TNetCommand = (
     ncNone,
-    ncDateTime
+    ncDateTime,
+    ncUpfile
   );
 
   TDataPack = class
@@ -56,12 +58,15 @@ type
 
 const
   gc_VERSION = 1;
-  gc_COMMANDSTR : array[ncNone..ncDateTime] of string = (
+  gc_COMMANDSTR : array[ncNone..ncUpfile] of string = (
     '',
-    'datetime'
+    'datetime',
+    'upfile'
   );
 
 implementation
+uses
+  SysUtils,Classes;
 
 { TDataPack }
 
@@ -99,6 +104,8 @@ var
   myJson : TlkJSONobject;
   mydatajson : TlkJSONobject;
   i : Integer;
+  myfilename : string;
+  myfs : TFileStream;
 begin
   myJson := TlkJSONobject.Create;
   mydatajson := TlkJSONobject.Create;
@@ -109,10 +116,34 @@ begin
     myJson.Add('command',gc_COMMANDSTR[fcommand]);
     myJson.Add('zip',fzip);
     myJson.Add('encrypt',fencrypt);
-    myJson.Add('data',fdata);
+
+    //如是上传文件
+    if fcommand = ncUpfile then
+    begin
+      myfilename := fdata.getString('filename');
+      if FileExists(myfilename) then
+      begin
+        //流的大小
+        myfs := TFileStream.Create(myfilename,fmOpenRead);
+        try
+          mydatajson.Add('filename',ExtractFileName(myfilename));
+          mydatajson.Add('length',myfs.Size);
+          mydatajson.Add('md5','');//文件的md5
+
+          myJson.Add('data',mydatajson);
+        finally
+          myfs.Free;
+        end;
+      end;
+    end
+    else begin
+      myJson.Add('data',fdata);
+    end;
+
     //转成UTF8
     i := 0;
     Result := UTF8Encode(GenerateReadableText(myJson,i));
+
   finally
     myJson.Free;
   end;
