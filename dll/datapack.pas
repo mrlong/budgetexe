@@ -20,9 +20,13 @@ unit datapack;
 
 interface
 uses
-  uLkJSON;
+  superobject;
 
 type
+  TNetObjectCommand = class;
+  TDataPack = class;
+
+  TNetObjectCommandClass = class of TNetObjectCommand;
 
   TNetCommand = (
     ncNone,
@@ -34,35 +38,55 @@ type
     fver : Integer;
     fsuccess : Boolean;
     fmsg : string;
-    fcommand : TNetCommand;
+    fcommand : TNetObjectCommand;
     fzip : Boolean;
     fencrypt:Boolean;
-    fdata : TlkJSONobject;
+    fdata : ISuperObject;
 
   public
     constructor Create();overload;
     constructor Create(ACommand:TNetCommand);overload;
     destructor Destroy; override;
 
-    function toJsonStr():string;        //转成json字符串
+    function ToJsonStr():string;   //转成json字符串
     function Parse(str:String):Boolean; //解释成对象
+    function LoadJsonStr(AStr:string):Boolean;//解出对象内容
 
     property ver : Integer read fver;
     property success : Boolean read fsuccess write fsuccess;
     property msg : string read fmsg write fmsg;
-    property command : TNetCommand read fcommand write fcommand;
     property zip :Boolean read fzip write fzip;
     property encrypt : Boolean read fencrypt write fencrypt;
-    property data : TlkJSONobject read fdata write fdata;
+    property data : ISuperObject read fdata write fdata;
+  end;
+
+  //命令的基类
+  TNetObjectCommand = class(TObject)
+    fOwner : TDataPack;
+    fCommandName : string;
+    fCommand : TNetCommand;
+  public
+    constructor Create();
+    function ToJsonStr():string; virtual;
+    function LoadJsonStr(AStr:string):Boolean;virtual;
+  end;
+
+  //取出时间
+  TDateTimeCommand = class(TNetObjectCommand)
+    constructor Create();
+    function ToJsonStr():string; override;
+    function LoadJsonStr(AStr:string):Boolean;override;
+  end;
+
+  //上传文件
+  TUpFileCommand = class(TNetObjectCommand)
+    constructor Create();
+    function ToJsonStr():string; override;
+    function LoadJsonStr(AStr:string):Boolean;override;
   end;
 
 const
   gc_VERSION = 1;
-  gc_COMMANDSTR : array[ncNone..ncUpfile] of string = (
-    '',
-    'datetime',
-    'upfile'
-  );
 
 implementation
 uses
@@ -75,22 +99,36 @@ begin
   fver := gc_VERSION;
   fsuccess := True;
   fmsg := '';
-  fcommand := ncNone;
   fzip     := False;
   fencrypt := False;
-  fdata := TlkJSONobject.Create;
+  fdata := SO;
 end;
 
 constructor TDataPack.Create(ACommand: TNetCommand);
 begin
   Create();
-  fcommand := ACommand;
+  case ACommand of
+    ncNone     : fcommand := TNetObjectCommand.Create;
+    ncDateTime : fcommand := TDateTimeCommand.Create;
+    ncUpfile   : fcommand := TUpFileCommand.Create;
+  end;
+  fcommand.fOwner := Self;
+
 end;
 
 destructor TDataPack.Destroy;
 begin
-  fdata.Free;
+  fdata := nil;
   inherited;
+end;
+
+function TDataPack.LoadJsonStr(AStr: string): Boolean;
+begin
+  Result := False;
+  if Assigned(fCommand) then
+  begin
+    Result := fCommand.LoadJsonStr(AStr);
+  end;
 end;
 
 function TDataPack.Parse(str: String): Boolean;
@@ -100,54 +138,127 @@ begin
 end;
 
 function TDataPack.toJsonStr: string;
+begin
+  Result := '';
+  if Assigned(fcommand) then
+  begin
+    Result := fCommand.ToJsonStr;
+  end;
+end;
+
+{ TNetObjectCommand }
+
+constructor TNetObjectCommand.Create;
+begin
+  fCommandName := '';
+end;
+
+function TNetObjectCommand.LoadJsonStr(AStr: string): Boolean;
+begin
+  //子类重载
+end;
+
+function TNetObjectCommand.ToJsonStr: string;
+begin
+  //子类重载
+end;
+
+{ TDateTimeCommand }
+
+constructor TDateTimeCommand.Create;
+begin
+  inherited Create();
+  fCommandName := 'datetime';
+end;
+
+function TDateTimeCommand.LoadJsonStr(AStr: string): Boolean;
+begin
+  //
+end;
+
+function TDateTimeCommand.ToJsonStr: string;
 var
-  myJson : TlkJSONobject;
-  mydatajson : TlkJSONobject;
+  myJson : ISuperObject;
   i : Integer;
   myfilename : string;
   myfs : TFileStream;
 begin
-  myJson := TlkJSONobject.Create;
-  mydatajson := TlkJSONobject.Create;
+  myJson := SO;
   try
-    myJson.Add('ver',fver);
-    myJson.Add('success',fsuccess);
-    myJson.Add('msg',fmsg);
-    myJson.Add('command',gc_COMMANDSTR[fcommand]);
-    myJson.Add('zip',fzip);
-    myJson.Add('encrypt',fencrypt);
+    myJson.I['ver'] := fOwner.fver;
+    myJson.B['success'] := fOwner.fsuccess;
+    myJson.S['msg'] := fOwner.fmsg;
+    myJson.S['command'] := fCommandName;
+    myJson.B['zip'] := fOwner.fzip;
+    myJson.B['encrypt'] := fOwner.fencrypt;
+    myJson.O['data'] := fOwner.fdata.Clone;
+
+    //转成UTF8
+    Result := UTF8Encode(myJson.AsString);
+
+  finally
+    myJson := nil;
+  end;
+end;
+
+
+{ TUpFileCommand }
+
+constructor TUpFileCommand.Create;
+begin
+  inherited Create();
+  fCommandName := 'upfile';
+end;
+
+function TUpFileCommand.LoadJsonStr(AStr: string): Boolean;
+begin
+  Result := False;
+end;
+
+function TUpFileCommand.ToJsonStr: string;
+var
+  myJson : ISuperObject;
+  mydatajson : ISuperObject;
+  i : Integer;
+  myfilename : string;
+  myfs : TFileStream;
+begin
+  myJson := SO;
+  mydatajson := SO;
+  try
+    myJson.I['ver'] := fOwner.fver;
+    myJson.B['success'] := fOwner.fsuccess;
+    myJson.S['msg'] := fOwner.fmsg;
+    myJson.S['command'] := fCommandName;
+    myJson.B['zip'] := fOwner.fzip;
+    myJson.B['encrypt'] := fOwner.fencrypt;
 
     //如是上传文件
-    if fcommand = ncUpfile then
+    myfilename := fOwner.fdata.S['filename'];
+    if FileExists(myfilename) then
     begin
-      myfilename := fdata.getString('filename');
-      if FileExists(myfilename) then
-      begin
-        //流的大小
-        myfs := TFileStream.Create(myfilename,fmOpenRead);
-        try
-          mydatajson.Add('filename',ExtractFileName(myfilename));
-          mydatajson.Add('length',myfs.Size);
-          mydatajson.Add('md5','');//文件的md5
+      //流的大小
+      myfs := TFileStream.Create(myfilename,fmOpenRead);
+      try
+        mydatajson.S['filename'] := ExtractFileName(myfilename);
+        mydatajson.I['length'] := myfs.Size;
+        mydatajson.S['md5']  := '';//文件的md5
 
-          myJson.Add('data',mydatajson);
-        finally
-          myfs.Free;
-        end;
+        mydatajson.O['data'] := mydatajson;
+      finally
+        myfs.Free;
       end;
-    end
-    else begin
-      myJson.Add('data',fdata);
     end;
 
     //转成UTF8
-    i := 0;
-    Result := UTF8Encode(GenerateReadableText(myJson,i));
+    Result := UTF8Encode(myJson.AsString);
 
   finally
-    myJson.Free;
+    myJson := nil;
+    mydataJson := nil;
   end;
 end;
+
 
 end.
 

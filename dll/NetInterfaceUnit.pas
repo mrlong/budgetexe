@@ -19,8 +19,15 @@ type
   INet = interface
     ['{2B71FED7-0CDF-4D6A-A3EE-D6CF3F37B29B}']
 
+    //连接服务器
+    function Connect(Atimeout:integer):boolean;stdcall;
+    procedure Disconnect();stdcall;
+    function Connected():Boolean;stdcall;
+
     //获取服务器时间
     function GetServerDataTime():widestring; stdcall;
+
+
   end;
 
 

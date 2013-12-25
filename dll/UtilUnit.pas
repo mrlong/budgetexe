@@ -16,36 +16,64 @@ interface
 uses
   SysUtils,Windows,Classes,
   IdIOHandler, IdIOHandlerSocket,IdIOHandlerStack, IdSSL, IdSSLOpenSSL,
-  NetInterfaceUnit;
+  IdTCPClient,
+  NetInterfaceUnit,superobject;
 
 type
 
   TNet = class(TInterfacedObject,INet)
   private
     fHandle  : THandle;
+    fConfig  : ISuperObject;
+    fIdTCPClient : TIdTCPClient;
     fIdSSLIOHandler : TIdSSLIOHandlerSocketOpenSSL;
   public
-    constructor Create(AHandle:THandle;AConfig:string);
+    constructor Create(AHandle:THandle);
     destructor Destroy; override;
 
     //接口内容
+    function Connect(Atimeout:integer):boolean;stdcall;
+    procedure Disconnect();stdcall;
+    function Connected():Boolean;stdcall;
+
     function GetServerDataTime():widestring; stdcall;
+
+
   end;
 
+  //
+  // 参数: AConfig
+  // {
+  //   ssl: true  表示采用ssl连接，这时key ,cert可填写
+  //   key: "绝对路径"
+  //   cert: "绝对路径"
+  //   host: "" 服务器ip
+  //   port: ""
+  // }
+  //
   function CreateNet(AHandle:HWND;AConfig:widestring): INet; stdcall;
   function CheckOnLine: Boolean; stdcall;
 
 implementation
 uses
   Vcl.forms,
-  IdTCPClient,
+  datapack,
   WinInet;
 
   function IsNetworkAlive(var varlpdwFlagsLib:Integer):Integer;stdcall;external 'sensapi.dll';
 
   function CreateNet(AHandle:HWND;AConfig:WideString): INet; stdcall;
+  var
+    i : integer;
+    myNet : TNet;
+    myjson : ISuperObject;
   begin
-    Result := TNet.Create(AHandle,AConfig);
+    myNet := TNet.Create(AHandle);
+    myjson := SO(AConfig);
+    if myNet.fConfig <> nil then
+      myNet.fConfig := nil;
+    myNet.fConfig := myjson.Clone;
+    Result := myNet;
   end;
 
   function CheckOnLine: Boolean; stdcall;
@@ -97,25 +125,105 @@ uses
 
 { TNet }
 
-constructor TNet.Create(AHandle: THandle; AConfig: string);
+function TNet.Connect(Atimeout: integer): boolean;
+var
+  mykey : string;
+  mycret : string;
+  myhost : string;
+  myport : integer;
+  myssl : Boolean;
+begin
+  //
+  mykey  := fConfig.S['key'];
+  mycret := fConfig.S['cert'];
+  myhost := fConfig.S['host'];
+  myport := fConfig.I['port'];
+  myssl  := fConfig.B['ssl'];
+
+  if (myhost='') or (myport=0) then
+  begin
+    Result := False;
+    Exit;
+  end;
+
+  if myssl and ((mykey='') or (mycret='') )  then
+  begin
+    Result := False;
+    Exit;
+  end;
+
+
+  if myssl  then
+  begin
+    fIdSSLIOHandler.SSLOptions.CertFile := mycret;
+    fIdSSLIOHandler.SSLOptions.KeyFile  := mykey;
+    fIdSSLIOHandler.SSLOptions.Method   := sslvSSLv23;
+    fIdTCPClient.IOHandler := fIdSSLIOHandler;
+  end;
+
+  fIdTCPClient.ConnectTimeout := Atimeout;
+  fIdTCPClient.Port := myport;
+  fIdTCPClient.Host := myhost;
+
+  try
+    fIdTCPClient.Connect;
+    Result := fIdTCPClient.Connected;
+  except on E: Exception do
+    Result := False;
+  end;
+end;
+
+function TNet.Connected: Boolean;
+begin
+  Result := fIdTCPClient.Connected;
+end;
+
+constructor TNet.Create(AHandle: THandle);
 begin
   fHandle := Application.Handle;
   Application.Handle := AHandle;
   fIdSSLIOHandler := TIdSSLIOHandlerSocketOpenSSL.Create(nil);
-  //fIdSSLIOHandler.SSLOptions.CertFile :=
-
+  fConfig := SO;
+  fIdTCPClient := TIdTCPClient.Create(nil);
 end;
 
 destructor TNet.Destroy;
 begin
+  if fIdTCPClient.Connected then
+    fIdTCPClient.Disconnect;
+  fIdTCPClient.Free;
   fIdSSLIOHandler.Free;
+  fConfig := nil;
   Application.Handle := fHandle;
   inherited;
 end;
 
-function TNet.GetServerDataTime: widestring;
+procedure TNet.Disconnect;
 begin
-  //
+  if fIdTCPClient.Connected then
+    fIdTCPClient.Disconnect;
+end;
+
+function TNet.GetServerDataTime: widestring;
+var
+  mydp : TDataPack;
+  mystr : string;
+begin
+  Result := '';
+  mydp := TDataPack.Create(ncDateTime);
+  try
+    mystr := mydp.toJsonStr();
+    if fIdTCPClient.Connected then
+    begin
+      fIdTCPClient.Socket.Write(mystr);
+      //mystr := Utf8Decode(IdTCPClient1.Socket.ReadLn);
+
+      //Memo1.Lines.Add(mystr);
+    end;
+  finally
+    mydp.Free;
+  end;
+
 end;
 
 end.

@@ -11,6 +11,8 @@ object Form1: TForm1
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
   object Button1: TButton
@@ -65,6 +67,24 @@ object Form1: TForm1
     TabOrder = 5
     OnClick = Button3Click
   end
+  object Button4: TButton
+    Left = 152
+    Top = 408
+    Width = 75
+    Height = 25
+    Caption = 'JSON'#30340#35835#20889
+    TabOrder = 6
+    OnClick = Button4Click
+  end
+  object Button5: TButton
+    Left = 246
+    Top = 408
+    Width = 75
+    Height = 25
+    Caption = 'Button5'
+    TabOrder = 7
+    OnClick = Button5Click
+  end
   object IdTCPClient1: TIdTCPClient
     IOHandler = IdSSLIOHandlerSocketOpenSSL1
     ConnectTimeout = 0
@@ -78,7 +98,7 @@ object Form1: TForm1
     MaxLineAction = maException
     Port = 0
     DefaultPort = 0
-    SSLOptions.CertFile = 'D:\git\budgetexe\keys\client1.crt'
+    SSLOptions.CertFile = 'D:\git\budgetexe\keys\client.crt'
     SSLOptions.KeyFile = 'D:\git\budgetexe\keys\client.key'
     SSLOptions.Method = sslvSSLv23
     SSLOptions.SSLVersions = [sslvSSLv2, sslvSSLv3, sslvTLSv1, sslvTLSv1_1, sslvTLSv1_2]

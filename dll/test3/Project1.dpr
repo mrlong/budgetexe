@@ -6,7 +6,9 @@ uses
   Vcl.Themes,
   Vcl.Styles,
   datapack in '..\datapack.pas',
-  uLkJSON in '..\uLkJSON.pas';
+  NetInterfaceUnit in '..\NetInterfaceUnit.pas',
+  superobject in '..\superobject.pas',
+  superxmlparser in '..\superxmlparser.pas';
 
 {$R *.res}
 
