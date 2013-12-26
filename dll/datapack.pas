@@ -156,11 +156,13 @@ end;
 function TNetObjectCommand.LoadJsonStr(AStr: string): Boolean;
 begin
   //子类重载
+  Result := true;
 end;
 
 function TNetObjectCommand.ToJsonStr: string;
 begin
   //子类重载
+  Result := '';
 end;
 
 { TDateTimeCommand }
@@ -172,8 +174,26 @@ begin
 end;
 
 function TDateTimeCommand.LoadJsonStr(AStr: string): Boolean;
+var
+  myJson : ISuperObject;
 begin
   //
+  Result := False;
+  myJson := SO(AStr);
+  if myJson.B['success'] then
+  begin
+    fOwner.fver := myJson.I['ver'];
+    fOwner.fsuccess := myJson.B['success'];
+    fOwner.fzip := myJson.B['zip'];
+    fOwner.fencrypt := myJson.B['encrypt'];
+    if fOwner.fdata <> nil then
+    begin
+      fOwner.fdata.Clear(true);
+      fOwner.fdata := nil;
+    end;
+    fOwner.fdata := myJson.O['data'].Clone;
+    Result := True;
+  end;
 end;
 
 function TDateTimeCommand.ToJsonStr: string;
@@ -181,7 +201,6 @@ var
   myJson : ISuperObject;
   i : Integer;
   myfilename : string;
-  myfs : TFileStream;
 begin
   myJson := SO;
   try

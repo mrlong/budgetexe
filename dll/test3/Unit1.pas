@@ -4,24 +4,23 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, IdBaseComponent, IdComponent,
-  IdTCPConnection, IdTCPClient, Vcl.StdCtrls, IdIOHandler, IdIOHandlerSocket,
-  IdIOHandlerStack, IdSSL, IdSSLOpenSSL,NetInterfaceUnit,DBXJSON;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+ Vcl.StdCtrls ,
+  NetInterfaceUnit,DBXJSON;
 
 
 
 type
   TForm1 = class(TForm)
-    IdTCPClient1: TIdTCPClient;
     Button1: TButton;
     Edit1: TEdit;
     Edit2: TEdit;
     Button2: TButton;
     Memo1: TMemo;
-    IdSSLIOHandlerSocketOpenSSL1: TIdSSLIOHandlerSocketOpenSSL;
     Button3: TButton;
     Button4: TButton;
     Button5: TButton;
+    Memo2: TMemo;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -39,44 +38,33 @@ type
 var
   Form1: TForm1;
 
-  function CheckOnLine:Boolean;stdcall;external 'net.dll';
-  function CreateNet(AHandle:HWND;AConfig:widestring): INet; stdcall;external 'net.dll';
+
 
 implementation
 uses
-superobject,
-datapack;
+superobject;
 
 {$R *.dfm}
 
 procedure TForm1.Button1Click(Sender: TObject);
 var
   mystr : string;
+  myvalue : Variant;
 begin
   //
-  {
-  if IdTCPClient1.Connected then
-    IdTCPClient1.Disconnect;
-  IdTCPClient1.Host := Edit1.Text;
-  IdTCPClient1.Port := StrToInt(Edit2.Text);
-  IdTCPClient1.Connect(Edit1.Text,IdTCPClient1.Port);
 
-  if IdTCPClient1.Connected then
-  begin
-    ShowMessage('连接成功');
-    mystr := IdTCPClient1.Socket.ReadLn;
-    Memo1.Lines.Add(mystr);
-
-  end
-  else begin
-    ShowMessage('连接失败');
-  end;
-   }
-
+  if fNet.Connected then
+    fNet.Disconnect;
 
   if fNet.connect(1000) then
   begin
-    ShowMessage('连接成功');
+    Memo2.Lines.Add('连接成功');
+    if fNet.GetValueByName('welcome',myvalue) then
+      Memo2.Lines.Add(myvalue);
+
+    if fNet.GetValueByName('authorized',myvalue) and (myvalue=true) then
+      Memo2.Lines.Add('authorized=true');
+
   end
   else
     ShowMessage('连接失败');
@@ -86,22 +74,10 @@ end;
 
 procedure TForm1.Button2Click(Sender: TObject);
 var
-  mydp : TDataPack;
   mystr : string;
 begin
-  mydp := TDataPack.Create(ncDateTime);
-  try
-    mystr := mydp.toJsonStr();
-    if IdTCPClient1.Connected then
-    begin
-      IdTCPClient1.Socket.Write(mystr);
-      mystr := Utf8Decode(IdTCPClient1.Socket.ReadLn);
-      Memo1.Lines.Add(mystr);
-    end;
-  finally
-    mydp.Free;
-  end;
-
+  mystr := fNet.GetServerDataTime;
+  Memo1.Lines.Add(mystr);
 end;
 
 procedure TForm1.Button3Click(Sender: TObject);

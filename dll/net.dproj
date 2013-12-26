@@ -96,6 +96,7 @@
         <DCCReference Include="NetInterfaceUnit.pas"/>
         <DCCReference Include="UtilUnit.pas"/>
         <DCCReference Include="ClientKeyUnit.pas"/>
+        <DCCReference Include="datapack.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

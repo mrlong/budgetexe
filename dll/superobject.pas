@@ -160,6 +160,7 @@ type
   private
     FRoot: TSuperAvlEntry;
     FCount: Integer;
+
     function balance(bal: TSuperAvlEntry): TSuperAvlEntry;
   protected
     procedure doDeleteEntry(Entry: TSuperAvlEntry; all: boolean); virtual;
@@ -215,10 +216,11 @@ type
     function GetNames: ISuperObject;
   end;
 
+  //迭代器
   TSuperAvlIterator = class
   private
     FTree: TSuperAvlTree;
-    FBranch: TSuperAvlBitArray;
+    FBranch: TSuperAvlBitArray;  //分支
     FDepth: LongInt;
     FPath: array[0..SUPER_AVL_MAX_DEPTH - 2] of TSuperAvlEntry;
   public
@@ -780,6 +782,7 @@ function ObjectIsError(obj: TSuperObject): boolean;
 function ObjectIsType(const obj: ISuperObject; typ: TSuperType): boolean;
 function ObjectGetType(const obj: ISuperObject): TSuperType;
 
+//下面三个方法是配套使用的.
 function ObjectFindFirst(const obj: ISuperObject; var F: TSuperObjectIter): boolean;
 function ObjectFindNext(var F: TSuperObjectIter): boolean;
 procedure ObjectFindClose(var F: TSuperObjectIter);
@@ -5358,6 +5361,7 @@ begin
     if (node1.FLt = nil) then
     begin
       node2 := node1.FGt;
+      //取出node1之后，要处理这个值了. 龙仕云
       if (node1.FPtr = nil) then
         list.Add(node1) else
         if all then
@@ -5371,6 +5375,7 @@ begin
     end;
     node1 := node2;
   end;
+
   for i := 0 to list.Count - 1 do
     Delete(TSuperAvlEntry(list[i]).FName);
   list.Free;

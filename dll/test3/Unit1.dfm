@@ -16,8 +16,8 @@ object Form1: TForm1
   PixelsPerInch = 96
   TextHeight = 13
   object Button1: TButton
-    Left = 8
-    Top = 40
+    Left = 6
+    Top = 8
     Width = 107
     Height = 25
     Caption = #36830#25509#26381#21153#22120
@@ -25,16 +25,16 @@ object Form1: TForm1
     OnClick = Button1Click
   end
   object Edit1: TEdit
-    Left = 121
-    Top = 42
+    Left = 119
+    Top = 8
     Width = 121
     Height = 21
     TabOrder = 1
     Text = 'localhost'
   end
   object Edit2: TEdit
-    Left = 121
-    Top = 69
+    Left = 119
+    Top = 35
     Width = 121
     Height = 21
     TabOrder = 2
@@ -85,27 +85,11 @@ object Form1: TForm1
     TabOrder = 7
     OnClick = Button5Click
   end
-  object IdTCPClient1: TIdTCPClient
-    IOHandler = IdSSLIOHandlerSocketOpenSSL1
-    ConnectTimeout = 0
-    IPVersion = Id_IPv4
-    Port = 0
-    ReadTimeout = -1
-    Left = 328
-    Top = 24
-  end
-  object IdSSLIOHandlerSocketOpenSSL1: TIdSSLIOHandlerSocketOpenSSL
-    MaxLineAction = maException
-    Port = 0
-    DefaultPort = 0
-    SSLOptions.CertFile = 'D:\git\budgetexe\keys\client.crt'
-    SSLOptions.KeyFile = 'D:\git\budgetexe\keys\client.key'
-    SSLOptions.Method = sslvSSLv23
-    SSLOptions.SSLVersions = [sslvSSLv2, sslvSSLv3, sslvTLSv1, sslvTLSv1_1, sslvTLSv1_2]
-    SSLOptions.Mode = sslmUnassigned
-    SSLOptions.VerifyMode = []
-    SSLOptions.VerifyDepth = 0
-    Left = 264
-    Top = 336
+  object Memo2: TMemo
+    Left = 246
+    Top = 8
+    Width = 257
+    Height = 48
+    TabOrder = 8
   end
 end

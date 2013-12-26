@@ -21,12 +21,18 @@ uses
 
 type
 
+
   TNet = class(TInterfacedObject,INet)
   private
     fHandle  : THandle;
     fConfig  : ISuperObject;
     fIdTCPClient : TIdTCPClient;
     fIdSSLIOHandler : TIdSSLIOHandlerSocketOpenSSL;
+
+    fOnLineCount : integer; //在线总数
+    fWelCome     : string;  //欢迎语
+    fAuthorized  : Boolean; //=true 表示已认证过了
+
   public
     constructor Create(AHandle:THandle);
     destructor Destroy; override;
@@ -37,7 +43,7 @@ type
     function Connected():Boolean;stdcall;
 
     function GetServerDataTime():widestring; stdcall;
-
+    function GetValueByName(AName:widestring; var AValue:Variant):Boolean;stdcall;
 
   end;
 
@@ -52,6 +58,8 @@ type
   // }
   //
   function CreateNet(AHandle:HWND;AConfig:widestring): INet; stdcall;
+
+  //断定是否在线
   function CheckOnLine: Boolean; stdcall;
 
 implementation
@@ -59,6 +67,12 @@ uses
   Vcl.forms,
   datapack,
   WinInet;
+
+
+{$IFDEF DEBUG}
+var
+  debugcount: integer = 0;
+{$ENDIF}
 
   function IsNetworkAlive(var varlpdwFlagsLib:Integer):Integer;stdcall;external 'sensapi.dll';
 
@@ -132,6 +146,8 @@ var
   myhost : string;
   myport : integer;
   myssl : Boolean;
+  myJson : ISuperObject;
+  myStr : string;
 begin
   //
   mykey  := fConfig.S['key'];
@@ -168,6 +184,19 @@ begin
   try
     fIdTCPClient.Connect;
     Result := fIdTCPClient.Connected;
+    if Result then
+    begin
+      myStr := fIdTCPClient.Socket.ReadLn();
+      myJson := SO(myStr);
+      try
+        fOnLineCount := myJson.I['onlinecount'];
+        fAuthorized  := myJson.B['authorized'];
+        fWelCome     := myJson.S['welcome'];
+      finally
+        myJson := nil;
+      end;
+    end;
+
   except on E: Exception do
     Result := False;
   end;
@@ -180,15 +209,23 @@ end;
 
 constructor TNet.Create(AHandle: THandle);
 begin
+{$IFDEF DEBUG}
+  InterlockedIncrement(debugcount);
+{$ENDIF}
   fHandle := Application.Handle;
   Application.Handle := AHandle;
   fIdSSLIOHandler := TIdSSLIOHandlerSocketOpenSSL.Create(nil);
   fConfig := SO;
   fIdTCPClient := TIdTCPClient.Create(nil);
+  fAuthorized := False;
+  fOnLineCount := 0;
 end;
 
 destructor TNet.Destroy;
 begin
+{$IFDEF DEBUG}
+  InterlockedDecrement(debugcount);
+{$ENDIF}
   if fIdTCPClient.Connected then
     fIdTCPClient.Disconnect;
   fIdTCPClient.Free;
@@ -216,14 +253,41 @@ begin
     if fIdTCPClient.Connected then
     begin
       fIdTCPClient.Socket.Write(mystr);
-      //mystr := Utf8Decode(IdTCPClient1.Socket.ReadLn);
-
-      //Memo1.Lines.Add(mystr);
+      mystr := fIdTCPClient.Socket.ReadLn;
+      if mydp.LoadJsonStr(mystr) then
+      begin
+        Result := mydp.fdata.S['datetime'];
+      end;
     end;
   finally
     mydp.Free;
   end;
-
 end;
+
+
+function TNet.GetValueByName(AName: widestring; var AValue: Variant): Boolean;
+var
+  myName : string;
+begin
+  Result := False;
+  myName := lowercase(AName);
+  if myName = 'welcome' then
+  begin
+    AValue := fWelCome;
+    Result := True;
+  end
+  else if myName = 'authorized' then
+  begin
+    AValue := fAuthorized;
+    Result := True;
+  end;
+end;
+
+{$IFDEF DEBUG}
+initialization
+
+finalization
+  Assert(debugcount = 0, 'net.dll 内存泄露。');
+{$ENDIF}
 
 end.

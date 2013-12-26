@@ -47,11 +47,16 @@ if(cluster.isMaster){
     socket.setEncoding('utf8');
     socket.name = socket.remoteAddress + ":" + socket.remotePort;
     clients.push(socket);
+    util.log(socket.name + ' 登录. 目前在线人数:' + clients.length);
     
-    socket.write( util.getTimeNow() + ' ' +  
-      (socket.authorized?'authorized':'unauthorized ') +
-      socket.name + ' in ' +
-      settings.welcome + '\r\n');
+    socket.write(JSON.stringify({
+      datetime:util.getTimeNow(),
+      authorized:socket.authorized,
+      welcome: settings.welcome,
+      youname: socket.name,
+      onlinecount:clients.length
+    }));
+    socket.write('\r\n');
   
     socket.on('data', function(data) {
       util.log('长度' + data.length + '内容:' +data.toString());

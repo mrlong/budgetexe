@@ -15,7 +15,8 @@ uses
   System.Classes,
   NetInterfaceUnit in 'NetInterfaceUnit.pas',
   UtilUnit in 'UtilUnit.pas',
-  ClientKeyUnit in 'ClientKeyUnit.pas';
+  ClientKeyUnit in 'ClientKeyUnit.pas',
+  datapack in 'datapack.pas';
 
 {$R *.res}
 
