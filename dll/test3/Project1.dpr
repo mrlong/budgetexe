@@ -5,7 +5,6 @@ uses
   Unit1 in 'Unit1.pas' {Form1},
   Vcl.Themes,
   Vcl.Styles,
-  datapack in '..\datapack.pas',
   NetInterfaceUnit in '..\NetInterfaceUnit.pas',
   superobject in '..\superobject.pas',
   superxmlparser in '..\superxmlparser.pas';

@@ -117,7 +117,6 @@
             <Form>Form1</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="..\datapack.pas"/>
         <DCCReference Include="..\NetInterfaceUnit.pas"/>
         <DCCReference Include="..\superobject.pas"/>
         <DCCReference Include="..\superxmlparser.pas"/>

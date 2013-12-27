@@ -4,7 +4,7 @@
  *
  * 修改记录
  *  编号    作者     时期        修改内容
- *   1     龙仕云  2013-12-17   创建文件
+ *   1     龙仕云  2013-12-17    创建文件
  *  
  *
  */
@@ -12,7 +12,7 @@
 var net = require('net');
 var settings = require('./settings');
 var util = require('./util');
-var clientdata = require('./data');
+var clientdata = require('./datapack');
 var cluster = require('cluster');
 var numCPUs = require('os').cpus().length; //cpu核数
 var tls = require('tls');
@@ -90,6 +90,7 @@ if(cluster.isMaster){
 
   server.listen(settings.port,settings.host);
   util.log('listen ' + settings.host + ':' + settings.port + ' pid:' + process.pid);
+  clientdata.enumcommand();
 
 } // cluster.isMaster
 

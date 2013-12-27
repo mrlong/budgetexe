@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
  Vcl.StdCtrls ,
-  NetInterfaceUnit,DBXJSON;
+  NetInterfaceUnit;
 
 
 
@@ -18,7 +18,6 @@ type
     Button2: TButton;
     Memo1: TMemo;
     Button3: TButton;
-    Button4: TButton;
     Button5: TButton;
     Memo2: TMemo;
     procedure Button1Click(Sender: TObject);
@@ -26,7 +25,6 @@ type
     procedure Button3Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure Button4Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
   private
     { Private declarations }
@@ -89,68 +87,6 @@ begin
     showmessage('²»ÄÜÉÏÍø');
 end;
 
-procedure TForm1.Button4Click(Sender: TObject);
-const JSON_DATA = '{"ArrayData":['+
-                    '{"DAT_INCL":"07/03/2012 17:33:03", "NUM_ORDE":1,"NUM_ATND":1, "NUM_ACAO":2, "NUM_RESU":3},'+
-                    '{"DAT_INCL":"07/03/2012 17:33:05", "NUM_ORDE":2,"NUM_ATND":1, "NUM_ACAO":4, "NUM_RESU":5},'+
-                    '{"DAT_INCL":"07/03/2012 17:33:05", "NUM_ORDE":3,"NUM_ATND":1, "NUM_ACAO":8, "NUM_RESU":null}'+
-                   ']}';
-
-
-var jsv   : TJsonValue;
-    originalObject : TJsonObject;
-
-    jsPair : TJsonPair;
-    jsArr : TJsonArray;
-    jso,LJsonObj : TJsonObject;
-    i : integer;
-begin
-
- try
-        //parse json string
-        jsv := TJSONObject.ParseJSONValue(JSON_DATA);
-        try
-            //value as object
-            originalObject := jsv as TJsonObject;
-
-            //get pair, wich contains Array of objects
-            jspair := originalObject.Get('ArrayData');
-            //pair value as array
-            jsArr := jsPair.jsonValue as  TJsonArray;
-
-            Memo1.Lines.Add('array size: ' + inttostr(jsArr.Size));
-            //enumerate objects in array
-            for i := 0 to jsArr.Size - 1 do begin
-                Memo1.Lines.Add('element ' + inttostr(i));
-                // i-th object
-                jso := jsArr.Get(i) as TJsonObject;
-
-                //enumerate object fields
-                for jsPair in jso do begin
-                    Memo1.Lines.Add('   ' + jsPair.JsonString.Value + ': ' + jsPair.JsonValue.Value);
-                end;
-            end;
-        finally
-            jsv.Free();
-            //readln;
-        end;
-    except
-        on E: Exception do
-          Memo1.Lines.Add(E.ClassName + ': ' + E.Message);
-    end;
-
-
-    //LJsonObj := TJSONObject.ParseJSONValue(TEncoding.ASCII.GetBytes('{"name":"ssss"}'), 0) as TJSONObject;
-    LJsonObj := TJSONObject.Create;
-    LJsonObj.ParseJSONValue('{"name":"ssss"}');// as TJSONObject;
-    Memo1.Lines.Add(inttostr(LJsonObj.Size));
-    Memo1.Lines.Add(LJsonObj.Value);
-    Memo1.Lines.Add(LJsonObj.ToString);
-    //Memo1.Lines.Add(LJsonObj.GetValue('name').ToString);
-
-end;
-
-
 procedure SaveJson;
 var
   json, json_sub: ISuperObject;
@@ -201,7 +137,6 @@ begin
   myJson.I['port'] := 1377;
   fNet := CreateNet(Self.Handle,myJson.AsString);
   myJson := nil;
-
 end;
 
 procedure TForm1.FormDestroy(Sender: TObject);

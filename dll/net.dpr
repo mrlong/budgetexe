@@ -16,7 +16,8 @@ uses
   NetInterfaceUnit in 'NetInterfaceUnit.pas',
   UtilUnit in 'UtilUnit.pas',
   ClientKeyUnit in 'ClientKeyUnit.pas',
-  datapack in 'datapack.pas';
+  datapack in 'datapack.pas',
+  cm_datetime in 'command\cm_datetime.pas';
 
 {$R *.res}
 
