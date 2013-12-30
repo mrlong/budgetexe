@@ -16,7 +16,7 @@ unit NetInterfaceUnit;
 
 interface
 uses
-  Windows;
+  Windows,ActiveX;
 type
 
   INet = interface
@@ -33,6 +33,9 @@ type
     // welcome =欢迎语
     // authorized =true 表示服务器认证成功
     function GetValueByName(AName:widestring;var AValue:Variant):Boolean;stdcall;
+
+    //上传文件
+    function UpFile(AFileName:widestring;IFileStream:IStream):Boolean;stdcall;
 
   end;
 

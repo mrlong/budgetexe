@@ -20,7 +20,7 @@ unit datapack;
 
 interface
 uses
-  superobject;
+  superobject ;
 
 type
   TNetObjectCommand = class;
@@ -42,6 +42,7 @@ type
     fzip : Boolean;
     fencrypt:Boolean;
     fdata : ISuperObject;
+
 
   public
     constructor Create();overload;
@@ -73,20 +74,14 @@ type
 
 
 
-  //上传文件
-  TUpFileCommand = class(TNetObjectCommand)
-    constructor Create();
-    function ToJsonStr():string; override;
-    function LoadJsonStr(AStr:string):Boolean;override;
-  end;
-
 const
   gc_VERSION = 1;
 
 implementation
 uses
-  SysUtils,Classes,
-  cm_datetime;
+  SysUtils,
+  cm_datetime,
+  cm_upfile;
 
 { TDataPack }
 
@@ -164,62 +159,7 @@ end;
 
 
 
-{ TUpFileCommand }
 
-constructor TUpFileCommand.Create;
-begin
-  inherited Create();
-  fCommandName := 'upfile';
-end;
-
-function TUpFileCommand.LoadJsonStr(AStr: string): Boolean;
-begin
-  Result := False;
-end;
-
-function TUpFileCommand.ToJsonStr: string;
-var
-  myJson : ISuperObject;
-  mydatajson : ISuperObject;
-  i : Integer;
-  myfilename : string;
-  myfs : TFileStream;
-begin
-  myJson := SO;
-  mydatajson := SO;
-  try
-    myJson.I['ver'] := fOwner.fver;
-    myJson.B['success'] := fOwner.fsuccess;
-    myJson.S['msg'] := fOwner.fmsg;
-    myJson.S['command'] := fCommandName;
-    myJson.B['zip'] := fOwner.fzip;
-    myJson.B['encrypt'] := fOwner.fencrypt;
-
-    //如是上传文件
-    myfilename := fOwner.fdata.S['filename'];
-    if FileExists(myfilename) then
-    begin
-      //流的大小
-      myfs := TFileStream.Create(myfilename,fmOpenRead);
-      try
-        mydatajson.S['filename'] := ExtractFileName(myfilename);
-        mydatajson.I['length'] := myfs.Size;
-        mydatajson.S['md5']  := '';//文件的md5
-
-        mydatajson.O['data'] := mydatajson;
-      finally
-        myfs.Free;
-      end;
-    end;
-
-    //转成UTF8
-    Result := UTF8Encode(myJson.AsString);
-
-  finally
-    myJson := nil;
-    mydataJson := nil;
-  end;
-end;
 
 
 end.

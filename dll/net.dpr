@@ -17,7 +17,8 @@ uses
   UtilUnit in 'UtilUnit.pas',
   ClientKeyUnit in 'ClientKeyUnit.pas',
   datapack in 'datapack.pas',
-  cm_datetime in 'command\cm_datetime.pas';
+  cm_datetime in 'command\cm_datetime.pas',
+  cm_upfile in 'command\cm_upfile.pas';
 
 {$R *.res}
 

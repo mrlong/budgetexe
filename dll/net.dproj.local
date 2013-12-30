@@ -1,18 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899-12-30 00:00:00.000.688,D:\git\budgetexe\dll\NetnterfaceUnit.pas=D:\git\budgetexe\dll\NetinterfaceUnit.pas</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.652,=D:\git\budgetexe\dll\Unit1.pas</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.586,=D:\git\budgetexe\dll\Unit1.pas</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.506,D:\git\budgetexe\dll\Unit2.pas=D:\git\budgetexe\dll\command\cm_datetime.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.290,C:\Users\mrlong\Documents\RAD Studio\Projects\Project1.dproj=D:\git\budgetexe\dll\net.dproj</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.291,D:\git\budgetexe\dll\Unit1.pas=D:\git\budgetexe\dll\UtilUnit.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.393,D:\git\budgetexe\dll\Unit1.pas=D:\git\budgetexe\dll\NetinterfaceUnit.pas</Transaction>
     <Transaction>1899-12-30 00:00:00.000.033,=D:\git\budgetexe\dll\Unit2.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.506,D:\git\budgetexe\dll\command\cm_datetime.pas=D:\git\budgetexe\dll\Unit2.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.619,D:\git\budgetexe\dll\Unit2.pas=D:\git\budgetexe\dll\ClientKeyUnit.pas</Transaction>
     <Transaction>1899-12-30 00:00:00.000.677,=D:\git\budgetexe\dll\Unit2.pas</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.290,D:\git\budgetexe\dll\net.dproj=C:\Users\mrlong\Documents\RAD Studio\Projects\Project1.dproj</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.672,D:\git\budgetexe\dll\NetInterfaceUnit.pas=D:\git\budgetexe\dll\NetnterfaceUnit.pas</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.393,D:\git\budgetexe\dll\NetinterfaceUnit.pas=D:\git\budgetexe\dll\Unit1.pas</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.158,=C:\Users\mrlong\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.619,D:\git\budgetexe\dll\ClientKeyUnit.pas=D:\git\budgetexe\dll\Unit2.pas</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.291,D:\git\budgetexe\dll\UtilUnit.pas=D:\git\budgetexe\dll\Unit1.pas</Transaction>
     <Transaction>1899-12-30 00:00:00.000.373,=D:\git\budgetexe\dll\datapack.pas</Transaction>
-  </Transactions>
+    <Transaction>1899-12-30 00:00:00.000.688,D:\git\budgetexe\dll\NetinterfaceUnit.pas=D:\git\budgetexe\dll\NetnterfaceUnit.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.158,=C:\Users\mrlong\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.672,D:\git\budgetexe\dll\NetnterfaceUnit.pas=D:\git\budgetexe\dll\NetInterfaceUnit.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.586,=D:\git\budgetexe\dll\Unit1.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.652,=D:\git\budgetexe\dll\Unit1.pas</Transaction>
+    <Transaction>2013-12-30 16:46:48.709,=D:\git\budgetexe\dll\Unit2.pas</Transaction>
+    <Transaction>2013-12-30 16:47:00.694,D:\git\budgetexe\dll\command\cm_upfile.pas=D:\git\budgetexe\dll\Unit2.pas</Transaction>
+  </Transactions>  <ProjectSortOrder AutoSort="0" SortType="0">
+    <File Path="command"/>
+    <File Path="command\cm_datetime.pas"/>
+    <File Path="command\cm_upfile.pas"/>
+    <File Path="ClientKeyUnit.pas"/>
+    <File Path="datapack.pas"/>
+    <File Path="NetInterfaceUnit.pas"/>
+    <File Path="UtilUnit.pas"/>
+  </ProjectSortOrder>
 </BorlandProject>

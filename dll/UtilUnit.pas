@@ -17,6 +17,7 @@ uses
   SysUtils,Windows,Classes,
   IdIOHandler, IdIOHandlerSocket,IdIOHandlerStack, IdSSL, IdSSLOpenSSL,
   IdTCPClient,
+  ActiveX,
   NetInterfaceUnit,superobject;
 
 type
@@ -44,6 +45,8 @@ type
 
     function GetServerDataTime():widestring; stdcall;
     function GetValueByName(AName:widestring; var AValue:Variant):Boolean;stdcall;
+    //上传文件
+    function UpFile(AFileName:widestring;IFileStream:IStream):Boolean;stdcall;
 
   end;
 
@@ -66,6 +69,7 @@ implementation
 uses
   Vcl.forms,
   datapack,
+  vcl.AxCtrls,
   WinInet;
 
 
@@ -282,6 +286,37 @@ begin
     Result := True;
   end;
 end;
+
+function TNet.UpFile(AFileName: widestring; IFileStream: IStream): Boolean;
+var
+  mydp : TDataPack;
+  mystr : string;
+  myOleStream: TOleStream;
+  myms: TMemoryStream;
+begin
+  Result := False;
+  mydp := TDataPack.Create(ncUpfile);
+  myOleStream := TOleStream.Create(IFileStream);
+  try
+    mydp.data.S['filename'] := AFileName;
+    mydp.data.I['length'] :=  myOleStream.Size;
+    mystr := mydp.toJsonStr();
+    if fIdTCPClient.Connected then
+    begin
+      fIdTCPClient.Socket.Write(mystr);
+      mystr := fIdTCPClient.Socket.ReadLn;
+      if mydp.LoadJsonStr(mystr) then
+      begin
+        //Result := mydp.fdata.S['datetime'];
+        Result := True;
+      end;
+    end;
+  finally
+    myOleStream.Free;
+    mydp.Free;
+  end;
+end;
+
 
 {$IFDEF DEBUG}
 initialization
