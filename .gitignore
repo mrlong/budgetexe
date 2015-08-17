@@ -1,0 +1,6 @@
+dll/Win32/*.*
+dll/_history/*.*
+dll/test-xe8/Win32/*.*
+dll/test-xe8/_history/*.*
+
+

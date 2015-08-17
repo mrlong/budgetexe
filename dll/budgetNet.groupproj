@@ -6,7 +6,7 @@
         <Projects Include="net.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="test3\Project1.dproj">
+        <Projects Include="test-xe8\Project1.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -27,13 +27,13 @@
         <MSBuild Projects="net.dproj" Targets="Make"/>
     </Target>
     <Target Name="Project1">
-        <MSBuild Projects="test3\Project1.dproj"/>
+        <MSBuild Projects="test-xe8\Project1.dproj"/>
     </Target>
     <Target Name="Project1:Clean">
-        <MSBuild Projects="test3\Project1.dproj" Targets="Clean"/>
+        <MSBuild Projects="test-xe8\Project1.dproj" Targets="Clean"/>
     </Target>
     <Target Name="Project1:Make">
-        <MSBuild Projects="test3\Project1.dproj" Targets="Make"/>
+        <MSBuild Projects="test-xe8\Project1.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
         <CallTarget Targets="net;Project1"/>

@@ -71,7 +71,7 @@ begin
     myJson.O['data'] := fOwner.fdata.Clone;
 
     //×ª³ÉUTF8
-    Result := UTF8Encode(myJson.AsString);
+    Result := myJson.AsString;
 
   finally
     myJson := nil;

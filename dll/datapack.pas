@@ -30,8 +30,7 @@ type
 
   TNetCommand = (
     ncNone,
-    ncDateTime,
-    ncUpfile
+    ncDateTime
   );
 
   TDataPack = class
@@ -80,8 +79,7 @@ const
 implementation
 uses
   SysUtils,
-  cm_datetime,
-  cm_upfile;
+  cm_datetime;
 
 { TDataPack }
 
@@ -101,7 +99,6 @@ begin
   case ACommand of
     ncNone     : fcommand := TNetObjectCommand.Create;
     ncDateTime : fcommand := TDateTimeCommand.Create;
-    ncUpfile   : fcommand := TUpFileCommand.Create;
   end;
   fcommand.fOwner := Self;
 
